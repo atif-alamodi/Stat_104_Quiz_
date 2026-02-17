@@ -1,39 +1,70 @@
 body {
+    margin: 0;
     font-family: Arial;
-    text-align: center;
-    padding: 40px;
     background: linear-gradient(to top, #7a4a2a, #f6efe8);
-    position: relative;
+    color: #3e2414;
 }
 
-/* شعار يوم التأسيس خلف الأسئلة فقط */
-body::before {
+/* الشعار خلف منطقة الأسئلة فقط */
+.quiz-section {
+    position: relative;
+    padding: 60px 20px;
+    min-height: 500px;
+}
+
+.quiz-section::before {
     content: "";
     background: url("founding-logo.png") no-repeat center;
-    background-size: 500px;
+    background-size: 600px;
     opacity: 0.06;
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
+    right: 0;
+    bottom: 0;
     pointer-events: none;
-    z-index: -1;
+}
+
+.container {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+header {
+    margin-bottom: 30px;
 }
 
 h1 {
-    color: #5a331c;
+    font-size: 42px;
+    margin-bottom: 10px;
 }
 
-button {
+.stats span {
+    margin: 10px 15px;
+    font-weight: bold;
+}
+
+.answers button {
     display: block;
-    margin: 10px auto;
-    padding: 10px 20px;
-    font-size: 16px;
+    margin: 12px auto;
+    padding: 12px 25px;
+    font-size: 18px;
+    background: #5a331c;
+    color: white;
+    border: none;
     cursor: pointer;
 }
 
-#stats span {
-    margin: 10px;
-    display: inline-block;
+.answers button:hover {
+    background: #7a4a2a;
+}
+
+#nextBtn {
+    margin-top: 20px;
+    padding: 12px 30px;
+    font-size: 18px;
+    background: #3e2414;
+    color: white;
+    border: none;
+    cursor: pointer;
 }
