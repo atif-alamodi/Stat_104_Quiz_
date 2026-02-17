@@ -10,15 +10,10 @@ const scoreEl = document.getElementById("score");
 const sessionEl = document.getElementById("session");
 const nextBtn = document.getElementById("nextBtn");
 
-sessionEl.textContent = "رمز الجلسة: S-" + 
+sessionEl.textContent = "رمز الجلسة: S-" +
 Math.random().toString(36).substring(2,8).toUpperCase();
 
 function loadQuestion() {
-
-    if (!questions || questions.length === 0) {
-        questionEl.textContent = "لم يتم تحميل بنك الأسئلة.";
-        return;
-    }
 
     const q = questions[current];
 
@@ -39,25 +34,21 @@ function loadQuestion() {
 }
 
 function checkAnswer(index) {
-
     const q = questions[current];
 
     if (index === q.correct) {
         score++;
-        feedbackEl.textContent = "إجابة صحيحة ✔";
+        feedbackEl.textContent = "✔ إجابة صحيحة";
     } else {
-        feedbackEl.textContent = "إجابة خاطئة ✖";
+        feedbackEl.textContent = "✖ إجابة خاطئة";
     }
 
     explanationEl.textContent = "الشرح: " + q.explanation;
-
     scoreEl.textContent = `الدرجة: ${score} / ${questions.length}`;
 }
 
 nextBtn.onclick = function() {
-
     current++;
-
     if (current < questions.length) {
         loadQuestion();
     } else {
