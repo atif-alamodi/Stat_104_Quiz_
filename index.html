@@ -2,50 +2,49 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>اختبار STA104</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
-  <main class="app">
+  <main class="page">
     <header class="top">
-      <h1>اختبار <span class="latin">STA104</span></h1>
-      <p class="sub">ثيم يوم التأسيس — اختيار من متعدد — تصحيح فوري + شرح + مرجع الصفحة</p>
+      <h1 class="title">اختبار <span>STA104</span></h1>
+      <p class="subtitle">ثيم يوم التأسيس — اختبار من متعدد + تصحيح فوري + شرح + مرجع الصفحة</p>
 
-      <div class="meta">
-        <div class="pill" id="progress">سؤال 0 من 0</div>
-        <div class="pill" id="scoreBox">الدرجة: 0 / 0</div>
-        <div class="pill" id="sessionCode">رمز الجلسة: —</div>
+      <div class="chips">
+        <div class="chip" id="progress">سؤال 0 من 0</div>
+        <div class="chip" id="score">الدرجة: 0 / 0</div>
+        <div class="chip" id="sessionCode">رمز الجلسة: -</div>
       </div>
-
-      <div class="banner">المادة سهلة… فقط عليكم المذاكرة 🇸🇦</div>
     </header>
 
-    <!-- منطقة السؤال (عليها العلامة المائية الثابتة) -->
-    <section class="stage" aria-live="polite">
+    <section class="card">
+      <!-- علامة مائية ثابتة خلف الأسئلة فقط -->
       <div class="watermark" aria-hidden="true"></div>
 
-      <h2 class="question" id="question">سيتم تحميل السؤال…</h2>
+      <div class="qwrap">
+        <div id="question" class="question">سيتم تحميل السؤال…</div>
+        <div id="answers" class="answers"></div>
 
-      <div class="answers" id="answers"></div>
+        <div class="feedback">
+          <div id="result" class="result"></div>
+          <div id="explain" class="explain"></div>
+          <div id="source" class="source"></div>
+        </div>
 
-      <div class="feedback">
-        <div class="result" id="result"></div>
-        <div class="explain" id="explain"></div>
-        <div class="source" id="source"></div>
+        <div class="actions">
+          <button id="nextBtn" class="btn">السؤال التالي</button>
+          <button id="restartBtn" class="btn secondary" style="display:none;">إعادة الاختبار</button>
+        </div>
+
+        <div id="fatal" class="fatal" style="display:none;"></div>
       </div>
-
-      <div class="actions">
-        <button class="btn" id="nextBtn">السؤال التالي</button>
-        <button class="btn secondary" id="restartBtn" style="display:none;">إعادة الاختبار</button>
-      </div>
-
-      <small class="hint" id="hint"></small>
     </section>
   </main>
 
-  <!-- مهم جدًا: questions.js قبل script.js -->
+  <!-- مهم جدًا: questions.js أولاً ثم script.js -->
   <script src="questions.js"></script>
   <script src="script.js"></script>
 </body>
