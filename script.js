@@ -1,128 +1,134 @@
-let currentQuestion = 0;
-let score = 0;
-let answered = false;
+(function () {
+  const questionEl = document.getElementById("question");
+  const answersEl = document.getElementById("answers");
+  const resultEl = document.getElementById("result");
+  const explainEl = document.getElementById("explain");
+  const sourceEl = document.getElementById("source");
+  const feedbackEl = document.getElementById("feedback");
 
-const questionEl = document.getElementById("question");
-const answersEl  = document.getElementById("answers");
-const resultEl   = document.getElementById("result");
-const explainEl  = document.getElementById("explain");
-const sourceEl   = document.getElementById("source");
-const nextBtn    = document.getElementById("nextBtn");
-const restartBtn = document.getElementById("restartBtn");
-const progressEl = document.getElementById("progress");
-const scoreEl    = document.getElementById("score");
-const sessionCodeEl = document.getElementById("sessionCode");
-const fatalEl = document.getElementById("fatal");
+  const nextBtn = document.getElementById("nextBtn");
+  const restartBtn = document.getElementById("restartBtn");
 
-// رمز الجلسة
-sessionCodeEl.textContent = "رمز الجلسة: S-" + Math.random().toString(36).substring(2, 8).toUpperCase();
+  const progressEl = document.getElementById("progress");
+  const scoreEl = document.getElementById("score");
+  const sessionCodeEl = document.getElementById("sessionCode");
 
-function fatal(msg){
-  fatalEl.style.display = "block";
-  fatalEl.textContent = msg;
-  questionEl.textContent = "لم يتم تحميل بنك الأسئلة.";
-  answersEl.innerHTML = "";
-  resultEl.textContent = "";
-  explainEl.textContent = "";
-  sourceEl.textContent = "";
-}
+  // جلسة
+  sessionCodeEl.textContent =
+    "رمز الجلسة: S-" + Math.random().toString(36).substring(2, 8).toUpperCase();
 
-function ensureQuestions(){
-  // لازم يكون window.questions = [...]
+  // تحقق من تحميل بنك الأسئلة
   if (!Array.isArray(window.questions) || window.questions.length === 0) {
-    fatal("لم يتم العثور على أسئلة. تأكد أن ملف questions.js موجود في الجذر ويحتوي: window.questions = [ ... ] وأنه يُستدعى قبل script.js.");
-    return false;
-  }
-  return true;
-}
-
-function updateHeader(){
-  progressEl.textContent = `سؤال ${currentQuestion + 1} من ${window.questions.length}`;
-  scoreEl.textContent = `الدرجة: ${score} / ${window.questions.length}`;
-}
-
-function loadQuestion() {
-  if (!ensureQuestions()) return;
-
-  answered = false;
-  const q = window.questions[currentQuestion];
-
-  updateHeader();
-  questionEl.textContent = q.question;
-
-  answersEl.innerHTML = "";
-  resultEl.textContent = "";
-  explainEl.textContent = "";
-  sourceEl.textContent = "";
-
-  q.answers.forEach((answer, index) => {
-    const btn = document.createElement("button");
-    btn.textContent = answer;
-    btn.onclick = () => checkAnswer(index, btn);
-    answersEl.appendChild(btn);
-  });
-}
-
-function lockAnswers(){
-  [...answersEl.querySelectorAll("button")].forEach(b => b.disabled = true);
-}
-
-function checkAnswer(index, clickedBtn) {
-  if (answered) return;
-  answered = true;
-
-  const q = window.questions[currentQuestion];
-  const correctIndex = q.correct;
-
-  lockAnswers();
-
-  // تلوين بسيط
-  const buttons = [...answersEl.querySelectorAll("button")];
-  buttons[correctIndex].style.outlineColor = "rgba(0,120,0,.45)";
-  buttons[correctIndex].style.background = "rgba(0,120,0,.08)";
-
-  if (index === correctIndex) {
-    score++;
-    resultEl.textContent = "إجابة صحيحة ✔";
-  } else {
-    clickedBtn.style.outlineColor = "rgba(160,0,0,.45)";
-    clickedBtn.style.background = "rgba(160,0,0,.08)";
-    resultEl.textContent = `إجابة خاطئة ✖ — الصحيح: ${q.answers[correctIndex]}`;
-  }
-
-  explainEl.textContent = `الشرح: ${q.explanation || "—"}`;
-  sourceEl.textContent = `المرجع: ${q.source || "—"}`;
-
-  updateHeader();
-}
-
-nextBtn.onclick = () => {
-  if (!ensureQuestions()) return;
-
-  currentQuestion++;
-  if (currentQuestion < window.questions.length) {
-    loadQuestion();
-  } else {
-    questionEl.textContent = "انتهى الاختبار";
+    questionEl.textContent = "لم يتم تحميل بنك الأسئلة.";
     answersEl.innerHTML = "";
-    resultEl.textContent = `درجتك النهائية: ${score} من ${window.questions.length}`;
+    feedbackEl.hidden = false;
+    resultEl.textContent = "تحقق من ملف questions.js";
+    explainEl.textContent =
+      "يجب أن يحتوي questions.js على: window.questions = [ ... ] وأن يكون مستدعى قبل script.js داخل index.html.";
+    sourceEl.textContent =
+      "وتأكد أن الملفات في الجذر وأن اسم questions.js صحيح تمامًا.";
+    progressEl.textContent = "سؤال 0 من 0";
+    scoreEl.textContent = "الدرجة: 0 / 0";
+    nextBtn.disabled = true;
+    return;
+  }
+
+  let current = 0;
+  let score = 0;
+  let locked = false;
+
+  function renderMeta() {
+    progressEl.textContent = `سؤال ${current + 1} من ${window.questions.length}`;
+    scoreEl.textContent = `الدرجة: ${score} / ${window.questions.length}`;
+  }
+
+  function loadQuestion() {
+    locked = false;
+    feedbackEl.hidden = true;
+    resultEl.textContent = "";
     explainEl.textContent = "";
     sourceEl.textContent = "";
-    nextBtn.style.display = "none";
-    restartBtn.style.display = "inline-block";
-    updateHeader();
+
+    const q = window.questions[current];
+
+    questionEl.textContent = q.question;
+    answersEl.innerHTML = "";
+
+    q.answers.forEach((txt, idx) => {
+      const btn = document.createElement("button");
+      btn.className = "answerBtn";
+      btn.type = "button";
+      btn.textContent = txt;
+      btn.addEventListener("click", () => choose(idx));
+      answersEl.appendChild(btn);
+    });
+
+    nextBtn.hidden = false;
+    restartBtn.hidden = true;
+    renderMeta();
   }
-};
 
-restartBtn.onclick = () => {
-  if (!ensureQuestions()) return;
+  function choose(selectedIndex) {
+    if (locked) return;
+    locked = true;
 
-  currentQuestion = 0;
-  score = 0;
-  nextBtn.style.display = "inline-block";
-  restartBtn.style.display = "none";
+    const q = window.questions[current];
+    const correctIndex = q.correct;
+
+    const buttons = Array.from(answersEl.querySelectorAll("button"));
+    buttons.forEach((b) => (b.disabled = true));
+
+    // تلوين الصحيح والخطأ
+    buttons[correctIndex]?.classList.add("correct");
+    if (selectedIndex !== correctIndex) {
+      buttons[selectedIndex]?.classList.add("wrong");
+    }
+
+    // نتيجة + شرح + مرجع
+    const isCorrect = selectedIndex === correctIndex;
+    if (isCorrect) score++;
+
+    feedbackEl.hidden = false;
+    resultEl.textContent = isCorrect ? "إجابة صحيحة ✔" : "إجابة خاطئة ✖";
+    explainEl.textContent = q.explanation || "—";
+    sourceEl.textContent = q.source || "—";
+
+    renderMeta();
+  }
+
+  nextBtn.addEventListener("click", () => {
+    if (!locked) {
+      // لا يسمح بالانتقال قبل الاختيار
+      feedbackEl.hidden = false;
+      resultEl.textContent = "اختر إجابة أولاً";
+      explainEl.textContent = "يجب اختيار أحد الخيارات قبل الانتقال للسؤال التالي.";
+      sourceEl.textContent = "";
+      return;
+    }
+
+    current++;
+    if (current < window.questions.length) {
+      loadQuestion();
+    } else {
+      // نهاية
+      questionEl.textContent = "انتهى الاختبار";
+      answersEl.innerHTML = "";
+      feedbackEl.hidden = false;
+      resultEl.textContent = `نتيجتك النهائية: ${score} من ${window.questions.length}`;
+      explainEl.textContent = "أحسنت. يمكنك إعادة المحاولة لتحسين الدرجة.";
+      sourceEl.textContent = "";
+      nextBtn.hidden = true;
+      restartBtn.hidden = false;
+      progressEl.textContent = `سؤال ${window.questions.length} من ${window.questions.length}`;
+      scoreEl.textContent = `الدرجة: ${score} / ${window.questions.length}`;
+    }
+  });
+
+  restartBtn.addEventListener("click", () => {
+    current = 0;
+    score = 0;
+    loadQuestion();
+  });
+
   loadQuestion();
-};
-
-// تشغيل
-loadQuestion();
+})();
