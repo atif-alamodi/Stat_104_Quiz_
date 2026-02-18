@@ -1,46 +1,52 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<title>اختبار STA104</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>اختبار STA104</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
+  <main class="app">
+    <header class="top">
+      <h1>اختبار <span class="latin">STA104</span></h1>
+      <p class="sub">ثيم يوم التأسيس — اختيار من متعدد — تصحيح فوري + شرح + مرجع الصفحة</p>
 
-<div class="container">
+      <div class="meta">
+        <div class="pill" id="progress">سؤال 0 من 0</div>
+        <div class="pill" id="scoreBox">الدرجة: 0 / 0</div>
+        <div class="pill" id="sessionCode">رمز الجلسة: —</div>
+      </div>
 
-<header>
-    <h1>اختبار STA104</h1>
-    <p>اختبار من متعدد — تصحيح فوري — شرح — ثيم يوم التأسيس</p>
-    <div class="stats">
-        <span id="progress"></span>
-        <span id="score"></span>
-        <span id="session"></span>
-    </div>
-</header>
+      <div class="banner">المادة سهلة… فقط عليكم المذاكرة 🇸🇦</div>
+    </header>
 
-<section class="quiz-section">
+    <!-- منطقة السؤال (عليها العلامة المائية الثابتة) -->
+    <section class="stage" aria-live="polite">
+      <div class="watermark" aria-hidden="true"></div>
 
-    <div class="question-area">
-        <h2 id="question">جاري تحميل السؤال...</h2>
-    </div>
+      <h2 class="question" id="question">سيتم تحميل السؤال…</h2>
 
-    <div id="answers" class="answers"></div>
+      <div class="answers" id="answers"></div>
 
-    <div class="result-area">
-        <p id="feedback"></p>
-        <p id="explanation"></p>
-    </div>
+      <div class="feedback">
+        <div class="result" id="result"></div>
+        <div class="explain" id="explain"></div>
+        <div class="source" id="source"></div>
+      </div>
 
-    <button id="nextBtn">السؤال التالي</button>
+      <div class="actions">
+        <button class="btn" id="nextBtn">السؤال التالي</button>
+        <button class="btn secondary" id="restartBtn" style="display:none;">إعادة الاختبار</button>
+      </div>
 
-</section>
+      <small class="hint" id="hint"></small>
+    </section>
+  </main>
 
-</div>
-
-<script src="questions.js"></script>
-<script src="script.js"></script>
-
+  <!-- مهم جدًا: questions.js قبل script.js -->
+  <script src="questions.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
